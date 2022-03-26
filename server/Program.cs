@@ -37,9 +37,9 @@ class Server
 
     }
 
-    static public Thread StartTheThread(TcpClient param1, string param2)
+    static public Thread StartTheThread(TcpClient client, string name)
     {
-        var t = new Thread(() => KeepListening(param1, param2));
+        var t = new Thread(() => KeepListening(client, name));
         t.Start();
         return t;
     }
