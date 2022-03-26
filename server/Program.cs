@@ -23,7 +23,7 @@ class Server
                 TcpClient client = server.AcceptTcpClient();
 
                 StartTheThread(client, Convert.ToString(counter));
-                Console.WriteLine(Process.GetCurrentProcess().Threads.Count);
+                Console.WriteLine($"Current threads count: {Process.GetCurrentProcess().Threads.Count}");
             }
         }
         catch (Exception ex)
@@ -37,10 +37,11 @@ class Server
 
     }
 
-    static public void StartTheThread(TcpClient param1, string param2)
+    static public Thread StartTheThread(TcpClient param1, string param2)
     {
         var t = new Thread(() => KeepListening(param1, param2));
         t.Start();
+        return t;
     }
 
     private static void KeepListening(TcpClient client, string name)
@@ -59,14 +60,12 @@ class Server
                 while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
                 {
 
-                    string msg = Encoding.ASCII.GetString(buffer);
+                    string msg = Encoding.ASCII.GetString(buffer, 0, bytesRead);
                     Console.WriteLine($"Receive {msg} from client: {info}");
 
                     msg = msg.ToUpper();
 
-                    buffer = Encoding.ASCII.GetBytes(msg);
-
-                    stream.Write(buffer, 0, bytesRead);
+                    stream.Write(Encoding.ASCII.GetBytes(msg), 0, bytesRead);
                     Console.WriteLine($"Send {msg} to client: {info}");
                 }
 
